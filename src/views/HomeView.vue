@@ -16,21 +16,26 @@
   }
 
   const btnClick = () => {
-    if (list.value.length >= 6) return
-    coins.value = [getRandom(), getRandom(), getRandom()]
-    console.log('coins: ', coins.value)
-    const sum: number = coins.value.reduce((pre: number, cur) => {
-      return pre + cur
-    }, 0)
-    const res = sum % 2 === 0 ? 1 : 0
-    showAnimation.value = true
-    console.log(res)
-    setTimeout(() => {
-      list.value.push(res)
+    if (list.value.length >= 6) {
+      console.log('解卦....');
+      
+    } else {
+      coins.value = [getRandom(), getRandom(), getRandom()]
+      console.log('coins: ', coins.value)
+      const sum: number = coins.value.reduce((pre: number, cur) => {
+        return pre + cur
+      }, 0)
+      const res = sum % 2 === 0 ? 1 : 0
+      showAnimation.value = true
+      console.log(res)
       setTimeout(() => {
-        showAnimation.value = false
-      }, 1000)
-    }, 2000)
+        list.value.push(res)
+        setTimeout(() => {
+          showAnimation.value = false
+        }, 1000)
+      }, 2000)
+    }
+    
   }
 </script>
 
