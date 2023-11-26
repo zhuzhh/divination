@@ -28,6 +28,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { ref } from 'vue'
+import axios from 'axios'
 import front from '../assets/zhengmian.png'
 import back from '../assets/fanmian.png'
 
@@ -35,17 +36,31 @@ const origin = ref(new Array(6).fill(-1))
 const list: Ref<(0 | 1)[]> = ref([])
 let coins: Ref<(0 | 1)[]> = ref([])
 let showAnimation = ref(false)
-console.log('localStorage.getItem(\'login_info\')', !!localStorage.getItem('login_info'))
+const openId = localStorage.getItem('login_info')
 
-let showTip = ref(!localStorage.getItem('login_info'))
+
+let showTip = ref(!openId)
 
 const getRandom = (): 0 |1 => {
   return Math.random() > 0.5 ? 1 : 0
 }
+
+// 下单
+const payAction = () => {
+  axios.post('wx/pay/generate/order', {
+    openId
+  }).then(res => {
+    console.log('pay success ', res)
+  }).catch(err => {
+    console.log(err)
+  })
+}
+
 // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfaf182e39798fc63&redirect_uri=http%3A%2F%2Fdevelopers.weixin.qq.com&response_type=code&scope=snsapi_base&state=STATE&uin=MTIwMDg0OTUxNQ%3D%3D&key=22614aef86399025569c3292dfbcdb62e471277bce57a583b078f8b96a0ad3416787e254db18b998c480ca597ce410c6&pass_ticket=C2+siAsckB3nCZ1+Vb/khVFABTOXitnuyW76qBZtyI+BY+D79yBbPm4ROqrq6x8Tkx+VamUhhRrQ7+BZON3PmupviyaXauukE1f0N20RqNw=&uin=MTIwMDg0OTUxNQ%3D%3D&key=ebc36c1e1a73bd88b9de1a68cf4a2f4a9a05169c57f9abe9fc4940fdb07d90daa86ce614dc1e8aab159bc948fea16eff&pass_ticket=C2+siAsckB3nCZ1+Vb/khVFABTOXitnuyW76qBZtyI+BY+D79yBbPm4ROqrq6x8TpU48ieLK6zuNQE3eHTHGn+Bx+o3Qz/nWBNoeIE1RWbU=
 const btnClick = () => {
   if (list.value.length >= 6) {
     console.log('解卦....')
+    payAction()
   } else {
     coins.value = [getRandom(), getRandom(), getRandom()]
     console.log('coins: ', coins.value)
@@ -67,7 +82,7 @@ const btnClick = () => {
 
 const loginAction = () => {
   console.log('....login')
-  window.open('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfaf182e39798fc63&redirect_uri=.%2Flogin&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
+  // window.open('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfaf182e39798fc63&redirect_uri=.%2Flogin&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
 }
 
 const tipClick = () => {
