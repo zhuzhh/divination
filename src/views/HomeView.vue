@@ -23,6 +23,19 @@
   <div class="tips-wrap" v-show="showTip" @click="tipClick">
     <span>卜卦要按起卦六次才能形成完整的卦象</span>
   </div>
+  <div class="detail-wrap" :class="showDetail ? 'show' : 'hide'">
+    <div class="mask"></div>
+    <div class="content-wrap" style="z-index: 99">
+      <img class="img" :src="contentImg" alt="">
+      <!--<img class="img" src="../assets/test.jpg" alt="">-->
+      <div class="tip">
+        <span style="color: #f00">注意:</span> 请妥善保存卦象释义,退出页面或关闭弹框后，则需要重新起卦
+      </div>
+      <div class="btn">
+        <img src="../assets/close.png" class="close" alt="" @click="closeDetail">
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -36,9 +49,15 @@ const origin = ref(new Array(6).fill(-1))
 const list: Ref<(0 | 1)[]> = ref([])
 let coins: Ref<(0 | 1)[]> = ref([])
 let showAnimation = ref(false)
+let showDetail = ref(false)
+let contentImg = ref('')
 const openId = localStorage.getItem('login_info')
 
 let showTip = ref(!openId)
+
+const closeDetail = () => {
+  showDetail.value = false
+}
 
 const getRandom = (): 0 | 1 => {
   return Math.random() > 0.5 ? 1 : 0
@@ -50,9 +69,56 @@ const payAction = () => {
     openId: localStorage.getItem('login_info')
   }).then(res => {
     console.log('pay success ', res)
+    res = res.data
+    getOrderStatusById(res.data.orderNum)
   }).catch(err => {
+    alert('下单失败!')
     console.log(err)
   })
+}
+
+let times = 10
+
+// 获取订单状态
+const getOrderStatusById = (orderNum: string, count = 0) => {
+  // 轮询十次
+  if (count >= times) return
+  axios.get(`/api/order/query/${orderNum}`)
+    .then(res => {
+      res = res.data
+      if (+res.code === 200) {
+        getDetail()
+      } else {
+        setTimeout(() => {
+          getOrderStatusById(orderNum, count++)
+        }, 2000)
+      }
+    })
+    .catch(err => {
+      console.error(err)
+      setTimeout(() => {
+        getOrderStatusById(orderNum, count++)
+      }, 2000)
+    })
+}
+
+// 解卦
+const getDetail = () => {
+  axios.get(`/api/divination/query/${list.value.join()}`)
+    .then(res => {
+      res = res.data
+      if (+res.code === 200 && res.data) {
+        contentImg.value = res.data.divinationExplainUrl
+        showDetail.value = true
+      } else {
+        console.error(res)
+        alert('获取解卦详情失败，请稍后重试!!!')
+      }
+    })
+    .catch(err => {
+      console.error(err)
+      alert('获取解卦详情失败，请稍后重试!!!')
+    })
 }
 
 const btnClick = () => {
@@ -121,7 +187,7 @@ const tipClick = () => {
 }
 
 .bar {
-  margin-top: 20px;
+  margin-top: 26px;
   height: 38px;
   margin-left: 2rem;
   margin-right: 2rem;
@@ -255,6 +321,69 @@ const tipClick = () => {
     width: 60%;
     font-weight: bold;
     //color: #000;
+  }
+}
+
+.detail-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateX(-100%);
+  z-index: 100;
+  overflow: hidden;
+  &.show {
+    transform: translateX(0);
+  }
+  .mask {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    bottom: 0;
+    z-index: -1;
+  }
+  .content-wrap {
+    //position: absolute;
+    //top: 0;
+    //left: 0;
+    //width: 100%;
+    ////top: 50%;
+    ////left: 50%;
+    ////transform: translate(-50%, -50%);
+    ////width: 100%;
+    //display: flex;
+    //align-items: center;
+    //justify-content: center;
+    //flex-direction: column;
+    //display: gird;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    max-width: 295px;
+    transform: translate(-50%, -50%);
+    margin: 10px 0;
+    .img {
+      width: 100%;
+    }
+    .tip {
+      //padding-top: 10px;
+      //color: #ed4e4c;
+      color: #fff;
+      font-size: 10px;
+      font-weight: bold;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px auto 0;
+      .close {
+        width: 20px;
+      }
+    }
   }
 }
 
