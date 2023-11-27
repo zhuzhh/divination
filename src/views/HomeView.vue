@@ -38,7 +38,6 @@ let coins: Ref<(0 | 1)[]> = ref([])
 let showAnimation = ref(false)
 const openId = localStorage.getItem('login_info')
 
-
 let showTip = ref(!openId)
 
 const getRandom = (): 0 | 1 => {
@@ -48,7 +47,7 @@ const getRandom = (): 0 | 1 => {
 // 下单
 const payAction = () => {
   axios.post('zhouyi/wxpay/generate/order', {
-    openId
+    openId: localStorage.getItem('login_info')
   }).then(res => {
     console.log('pay success ', res)
   }).catch(err => {
