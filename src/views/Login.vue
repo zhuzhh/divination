@@ -9,10 +9,10 @@ import axios from 'axios'
 // const userInfo = ref('zzh')
 
 const code = '0912SVGa1saYsG0Bl9Ha1izwtQ32SVGa'
-const host = 'https://6789.kongjiankeji.com/'
+const host = 'http://qiming.kongjiankeji.com/'
 
 onMounted(() => {
-  axios.get(`${host}wx/public-num/login/${code}/2/session`)
+  axios.get(`${host}zhouyi/wxpublic-num/login/${code}/2/session`)
     .then(res => {
       res = res.data
       // { code : 200, msg: '', data: 'wxOpenId'}

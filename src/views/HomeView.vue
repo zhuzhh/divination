@@ -41,13 +41,13 @@ const openId = localStorage.getItem('login_info')
 
 let showTip = ref(!openId)
 
-const getRandom = (): 0 |1 => {
+const getRandom = (): 0 | 1 => {
   return Math.random() > 0.5 ? 1 : 0
 }
 
 // 下单
 const payAction = () => {
-  axios.post('wx/pay/generate/order', {
+  axios.post('zhouyi/wxpay/generate/order', {
     openId
   }).then(res => {
     console.log('pay success ', res)
@@ -56,7 +56,6 @@ const payAction = () => {
   })
 }
 
-// https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfaf182e39798fc63&redirect_uri=http%3A%2F%2Fdevelopers.weixin.qq.com&response_type=code&scope=snsapi_base&state=STATE&uin=MTIwMDg0OTUxNQ%3D%3D&key=22614aef86399025569c3292dfbcdb62e471277bce57a583b078f8b96a0ad3416787e254db18b998c480ca597ce410c6&pass_ticket=C2+siAsckB3nCZ1+Vb/khVFABTOXitnuyW76qBZtyI+BY+D79yBbPm4ROqrq6x8Tkx+VamUhhRrQ7+BZON3PmupviyaXauukE1f0N20RqNw=&uin=MTIwMDg0OTUxNQ%3D%3D&key=ebc36c1e1a73bd88b9de1a68cf4a2f4a9a05169c57f9abe9fc4940fdb07d90daa86ce614dc1e8aab159bc948fea16eff&pass_ticket=C2+siAsckB3nCZ1+Vb/khVFABTOXitnuyW76qBZtyI+BY+D79yBbPm4ROqrq6x8TpU48ieLK6zuNQE3eHTHGn+Bx+o3Qz/nWBNoeIE1RWbU=
 const btnClick = () => {
   if (list.value.length >= 6) {
     console.log('解卦....')
@@ -82,7 +81,12 @@ const btnClick = () => {
 
 const loginAction = () => {
   console.log('....login')
-  // window.open('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfaf182e39798fc63&redirect_uri=.%2Flogin&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
+  let redirectUri = encodeURIComponent('http://qiming.kongjiankeji.com/index.html')
+  // let redirectUri = encodeURIComponent('http://6789.kongjiankeji.com/index.html')
+  let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa6d79f458a0e21e8&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`;
+  console.info('url', url)
+
+  window.open(url)
 }
 
 const tipClick = () => {
@@ -97,6 +101,7 @@ const tipClick = () => {
   display: flex;
   flex-direction: column-reverse;
   position: relative;
+
   &::before {
     content: '';
     position: absolute;
@@ -109,11 +114,13 @@ const tipClick = () => {
     opacity: 0.2;
     z-index: -1;
   }
+
   //.bg {
   //  background: url("../assets/bg.jpg") no-repeat;
   //  opacity: 0.3;
   //}
 }
+
 .bar {
   margin-top: 20px;
   height: 38px;
@@ -136,14 +143,17 @@ const tipClick = () => {
   background-color: #393739;
   /* transform: all 1s; */
 }
+
 .b0 {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
+
 .b0 .half {
   opacity: 1;
 }
+
 .btn-wrap {
   //border: 1px solid #df5151;
   //text-align: center;
@@ -155,12 +165,14 @@ const tipClick = () => {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+
   .icon {
     width: 80px;
     height: 80px;
     display: inline-block;
     border-radius: 50%;
   }
+
   .btn {
     border: 1px solid #df5151;
     text-align: center;
@@ -182,10 +194,12 @@ const tipClick = () => {
   //z-index: -1;
   //transition: opacity 300ms;
 }
+
 .animation-wrap.show {
   opacity: 1;
   //z-index: 100;
 }
+
 //.animation-wrap .mask {
 //  width: 100%;
 //  height: 100%;
@@ -203,6 +217,7 @@ const tipClick = () => {
   align-items: center;
   justify-content: center;
 }
+
 .animation-wrap .icon {
   width: 80px;
   height: 80px;
@@ -216,23 +231,26 @@ const tipClick = () => {
   transform-style: preserve-3d;
   perspective: 100px;
 }
+
 .animation-wrap.show .icon {
   transform: scale(1) rotateX(720deg);
   filter: blur(0px);
   opacity: 1;
 }
+
 .tips-wrap {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: rgba(0,0,0,0.6);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-size: 16px;
+
   span {
     display: inline-block;
     width: 60%;
