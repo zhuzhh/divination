@@ -15,9 +15,22 @@
   <div class="animation-wrap" :class="showAnimation ? 'show' : ''">
     <!--<div class="mask"></div>-->
     <div class="content">
-      <img class="icon" :src="coins[0] ? front : back" alt="">
-      <img class="icon" :src="coins[1] ? front : back" alt="">
-      <img class="icon" :src="coins[2] ? front : back" alt="">
+      <div class="contain" style="position: relative;">
+        <img class="zheng" :src="coins[0] ? front : back" alt="">
+        <img class="fan" :src="coins[0] ? back : front" alt="">
+      </div>
+      <div class="contain">
+        <img class="icon2 zheng" :src="coins[1] ? front : back" alt="">
+        <img class="icon2 fan" :src="coins[1] ? back : front" alt="">
+      </div>
+      <div class="contain">
+        <img class="icon3 zheng" :src="coins[2] ? front : back" alt="">
+        <img class="icon3 fan" :src="coins[2] ? back : front"  alt="">
+      </div>
+
+<!--      <img class="icon" :src="coins[0] ? front : back" alt="">-->
+<!--      <img class="icon" :src="coins[1] ? front : back" alt="">-->
+<!--      <img class="icon" :src="coins[2] ? front : back" alt="">-->
     </div>
   </div>
   <div class="tips-wrap" v-show="showTip" @click="tipClick">
@@ -51,7 +64,7 @@ let coins: Ref<(0 | 1)[]> = ref([])
 let showAnimation = ref(false)
 let showDetail = ref(false)
 let contentImg = ref('')
-const openId = localStorage.getItem('login_info')
+const openId = 123 // localStorage.getItem('login_info')
 
 let showTip = ref(!openId)
 
@@ -384,6 +397,59 @@ const tipClick = () => {
         width: 20px;
       }
     }
+  }
+}
+
+.animation-wrap.show  {
+  .zheng {
+    animation: turn 2.5s infinite;
+  }
+  .fan {
+    animation: turn 2.5s infinite;
+  }
+}
+.contain {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 10px;
+  .zheng {
+    position: absolute;
+    z-index: 5;
+    backface-visibility: hidden;
+    width: 80px;
+    height: 80px;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    perspective: 100px;
+    //animation-fill-mode: forwards;
+  }
+  .fan {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    perspective: 100px;
+    //animation-fill-mode: forwards;
+  }
+  //.icon2 {
+  //  animation-delay:100ms;
+  //}
+  //.icon3 {
+  //  animation-delay:200ms;
+  //}
+}
+
+@keyframes turn {
+  0% {
+    transform: rotateX(0deg);
+  }
+  40% {
+    transform: rotateX(720deg);
+  }
+  100% {
+    transform: rotateX(720deg);
   }
 }
 
