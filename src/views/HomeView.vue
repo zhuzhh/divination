@@ -58,6 +58,11 @@ import axios from 'axios'
 import front from '../assets/zhengmian.png'
 import back from '../assets/fanmian.png'
 
+// alert(window.location.href)
+// if (window.location.href.indexOf('?#') < 0) {
+//   window.location.href = window.location.href.replace('#', '?#')
+// }
+
 const origin = ref(new Array(6).fill(-1))
 const list: Ref<(0 | 1)[]> = ref([])
 let coins: Ref<(0 | 1)[]> = ref([])
@@ -83,10 +88,10 @@ const payAction = () => {
   axios.post(host + 'zhouyi/wx/pay/generate/order', {
     openId: localStorage.getItem('login_info')
   }).then(res => {
-    console.log('pay success ', res)
     res = res.data
+    console.log('pay success ', res)
     if (+res.code === 200 && res.data) {
-      getOrderStatusById(res.data.orderNum)
+      wxPay(res.data)
     } else {
       console.error(res.msg)
     }
@@ -94,6 +99,37 @@ const payAction = () => {
     alert('下单失败!')
     console.log(err)
   })
+}
+
+const wxPay = (params) => {
+  function onBridgeReady() {
+    WeixinJSBridge.invoke('getBrandWCPayRequest', {
+          "appId": appId,   //公众号ID，由商户传入
+          "timeStamp": params.timeStamp,   //时间戳，自1970年以来的秒数
+          "nonceStr": params.nonceStr,      //随机串
+          "package": params.packages,
+          "signType": params.signType,     //微信签名方式：
+          "paySign": params.paySign //微信签名
+        },
+        function(res) {
+          console.error('wxPay: ', res)
+          if (res.err_msg == "get_brand_wcpay_request:ok") {
+            // 使用以上方式判断前端返回,微信团队郑重提示：
+            //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+          }
+        });
+  }
+  if (typeof WeixinJSBridge == "undefined") {
+    if (document.addEventListener) {
+      document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+    } else if (document.attachEvent) {
+      document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+      document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+    }
+  } else {
+    onBridgeReady();
+  }
+
 }
 
 let times = 10
