@@ -79,12 +79,16 @@ const getRandom = (): 0 | 1 => {
 
 // 下单
 const payAction = () => {
-  axios.post(host + 'zhouyi/wxpay/generate/order', {
+  axios.post(host + 'zhouyi/wx/pay/generate/order', {
     openId: localStorage.getItem('login_info')
   }).then(res => {
     console.log('pay success ', res)
     res = res.data
-    getOrderStatusById(res.data.orderNum)
+    if (+res.code === 200 && res.data.orderNum) {
+      getOrderStatusById(res.data.orderNum)
+    } else {
+      console.error(res.msg)
+    }
   }).catch(err => {
     alert('下单失败!')
     console.log(err)
