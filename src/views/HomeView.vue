@@ -66,6 +66,7 @@ let showDetail = ref(false)
 let contentImg = ref('')
 const openId = localStorage.getItem('login_info')
 const host = 'http://qiming.kongjiankeji.com/'
+const appId = 'wxa6d79f458a0e21e8'
 
 let showTip = ref(!openId)
 
@@ -84,7 +85,7 @@ const payAction = () => {
   }).then(res => {
     console.log('pay success ', res)
     res = res.data
-    if (+res.code === 200 && res.data.orderNum) {
+    if (+res.code === 200 && res.data) {
       getOrderStatusById(res.data.orderNum)
     } else {
       console.error(res.msg)
@@ -166,7 +167,7 @@ const loginAction = () => {
   console.log('....login')
   let redirectUri = encodeURIComponent('http://qiming.kongjiankeji.com/login.html')
   // let redirectUri = encodeURIComponent('http://6789.kongjiankeji.com/index.html')
-  let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa6d79f458a0e21e8&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`;
+  let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`;
   console.info('url', url)
   window.open(url)
 }
