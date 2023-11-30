@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="./src/assets/logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卜卦-登录</title>
+  </head>
+  <body>
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.5.0/axios.min.js"></script>
+  <script>
+    import axios from "axios";
+
+    function getQueryVariable(variable)
+    {
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        if(pair[0] == variable){return pair[1];}
+      }
+      return(false);
+    }
+
+    console.log(window.location.herf)
+    var code = getQueryVariable('code') // '0912SVGa1saYsG0Bl9Ha1izwtQ32SVGa'
+    var host = 'http://qiming.kongjiankeji.com/'
+    axios.get(`${host}zhouyi/wxpublic-num/login/${code}/2/session`)
+      .then(res => {
+        res = res.data
+        // { code : 200, msg: '', data: 'wxOpenId'}
+        if (+res?.code === 200) {
+          localStorage.setItem('login_info', res.data)
+          window.location.reload('/');
+        } else {
+          console.log('获取openid失败: ', res)
+        }
+      })
+      .catch(err => {
+        console.log('error: ', err)
+      })
+  </script>
+  </body>
+</html>

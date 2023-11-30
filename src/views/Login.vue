@@ -21,7 +21,7 @@ onMounted(() => {
         // router.replace({
         //   path: '/'
         // })
-        window.location.reload('');
+        window.location.reload('/');
       } else {
         console.log('获取openid失败: ', res)
       }

@@ -64,7 +64,8 @@ let coins: Ref<(0 | 1)[]> = ref([])
 let showAnimation = ref(false)
 let showDetail = ref(false)
 let contentImg = ref('')
-const openId = 123 // localStorage.getItem('login_info')
+const openId = localStorage.getItem('login_info')
+const host = 'http://qiming.kongjiankeji.com/'
 
 let showTip = ref(!openId)
 
@@ -78,7 +79,7 @@ const getRandom = (): 0 | 1 => {
 
 // 下单
 const payAction = () => {
-  axios.post('zhouyi/wxpay/generate/order', {
+  axios.post(host + 'zhouyi/wxpay/generate/order', {
     openId: localStorage.getItem('login_info')
   }).then(res => {
     console.log('pay success ', res)
@@ -96,7 +97,7 @@ let times = 10
 const getOrderStatusById = (orderNum: string, count = 0) => {
   // 轮询十次
   if (count >= times) return
-  axios.get(`/api/order/query/${orderNum}`)
+  axios.get(host + `api/order/query/${orderNum}`)
     .then(res => {
       res = res.data
       if (+res.code === 200) {
@@ -117,7 +118,7 @@ const getOrderStatusById = (orderNum: string, count = 0) => {
 
 // 解卦
 const getDetail = () => {
-  axios.get(`/api/divination/query/${list.value.join()}`)
+  axios.get(host + `api/divination/query/${list.value.join()}`)
     .then(res => {
       res = res.data
       if (+res.code === 200 && res.data) {
@@ -159,11 +160,10 @@ const btnClick = () => {
 
 const loginAction = () => {
   console.log('....login')
-  let redirectUri = encodeURIComponent('http://qiming.kongjiankeji.com/index.html')
+  let redirectUri = encodeURIComponent('http://qiming.kongjiankeji.com/login.html')
   // let redirectUri = encodeURIComponent('http://6789.kongjiankeji.com/index.html')
   let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa6d79f458a0e21e8&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`;
   console.info('url', url)
-
   window.open(url)
 }
 
