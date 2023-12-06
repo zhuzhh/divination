@@ -22,7 +22,7 @@
 
     console.log(window.location.herf)
     var code = getQueryVariable('code') // '0912SVGa1saYsG0Bl9Ha1izwtQ32SVGa'
-    var host = 'http://qiming.kongjiankeji.com/'
+    var host = 'https://qiming.kongjiankeji.com/'
     if (code) {
       req()
     }
@@ -34,7 +34,7 @@
           if (+res?.code === 200 && res.data) {
             localStorage.setItem('login_info', res.data)
             // window.location.reload('http://qiming.kongjiankeji.com');
-            window.location.href = 'http://qiming.kongjiankeji.com'
+            window.location.href = 'https://qiming.kongjiankeji.com/index.html'
           } else {
             console.log('获取openid失败: ', res)
           }

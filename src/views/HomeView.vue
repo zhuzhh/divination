@@ -58,11 +58,6 @@ import axios from 'axios'
 import front from '../assets/zhengmian.png'
 import back from '../assets/fanmian.png'
 
-// alert(window.location.href)
-// if (window.location.href.indexOf('?#') < 0) {
-//   window.location.href = window.location.href.replace('#', '?#')
-// }
-
 const origin = ref(new Array(6).fill(-1))
 const list: Ref<(0 | 1)[]> = ref([])
 let coins: Ref<(0 | 1)[]> = ref([])
@@ -70,10 +65,12 @@ let showAnimation = ref(false)
 let showDetail = ref(false)
 let contentImg = ref('')
 const openId = localStorage.getItem('login_info')
-const host = 'http://qiming.kongjiankeji.com/'
+const host = 'https://qiming.kongjiankeji.com/'
 const appId = 'wxa6d79f458a0e21e8'
 
 let showTip = ref(!openId)
+
+console.log(window.location.href)
 
 const closeDetail = () => {
   showDetail.value = false
@@ -103,9 +100,10 @@ const payAction = () => {
 
 const wxPay = (params) => {
   function onBridgeReady() {
+    console.log('orderParams: ', JSON.stringify(params))
     WeixinJSBridge.invoke('getBrandWCPayRequest', {
           "appId": appId,   //公众号ID，由商户传入
-          "timeStamp": params.timeStamp,   //时间戳，自1970年以来的秒数
+          "timeStamp": params.timeStamp + "",   //时间戳，自1970年以来的秒数
           "nonceStr": params.nonceStr,      //随机串
           "package": params.packages,
           "signType": params.signType,     //微信签名方式：
@@ -118,6 +116,7 @@ const wxPay = (params) => {
             //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
           }
         });
+  //  scp -r dist/* root@182.92.157.104:/home/www/zhouyi/zhouyih5
   }
   if (typeof WeixinJSBridge == "undefined") {
     if (document.addEventListener) {
@@ -201,7 +200,7 @@ const btnClick = () => {
 
 const loginAction = () => {
   console.log('....login')
-  let redirectUri = encodeURIComponent('http://qiming.kongjiankeji.com/login.html')
+  let redirectUri = encodeURIComponent('https://qiming.kongjiankeji.com/login.html')
   // let redirectUri = encodeURIComponent('http://6789.kongjiankeji.com/index.html')
   let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`;
   console.info('url', url)
