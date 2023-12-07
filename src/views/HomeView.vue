@@ -74,6 +74,7 @@ console.log(window.location.href)
 
 const closeDetail = () => {
   showDetail.value = false
+  list.value.length = 0
 }
 
 const getRandom = (): 0 | 1 => {
@@ -102,20 +103,21 @@ const wxPay = (params) => {
   function onBridgeReady() {
     console.log('orderParams: ', JSON.stringify(params))
     WeixinJSBridge.invoke('getBrandWCPayRequest', {
-          "appId": appId,   //公众号ID，由商户传入
-          "timeStamp": params.timeStamp + "",   //时间戳，自1970年以来的秒数
-          "nonceStr": params.nonceStr,      //随机串
-          "package": params.packages,
-          "signType": params.signType,     //微信签名方式：
-          "paySign": params.paySign //微信签名
-        },
-        function(res) {
-          console.error('wxPay: ', res)
-          if (res.err_msg == "get_brand_wcpay_request:ok") {
-            // 使用以上方式判断前端返回,微信团队郑重提示：
-            //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-          }
-        });
+      "appId": appId,   //公众号ID，由商户传入
+      "timeStamp": params.timeStamp + "",   //时间戳，自1970年以来的秒数
+      "nonceStr": params.nonceStr,      //随机串
+      "package": params.packages,
+      "signType": params.signType,     //微信签名方式：
+      "paySign": params.paySign //微信签名
+    },
+    function(res) {
+      console.error('wxPay: ', res)
+      if (res.err_msg == "get_brand_wcpay_request:ok") {
+        // 使用以上方式判断前端返回,微信团队郑重提示：
+        // res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+      }
+      getOrderStatusById(params.outTradeNo)
+    });
   //  scp -r dist/* root@182.92.157.104:/home/www/zhouyi/zhouyih5
   }
   if (typeof WeixinJSBridge == "undefined") {
@@ -135,34 +137,43 @@ let times = 10
 
 // 获取订单状态
 const getOrderStatusById = (orderNum: string, count = 0) => {
+  console.log('查询订单状态: ', orderNum)
+  console.log('查询订单状态 count: ', count)
   // 轮询十次
   if (count >= times) return
-  axios.get(host + `api/order/query/${orderNum}`)
+  // axios.get(host + `zhouyi/api/order/query/${orderNum}`)
+  axios.get(host + `zhouyi/wx/pay/query/${orderNum}`)
     .then(res => {
+      console.log('res: ', res)
       res = res.data
       if (+res.code === 200) {
         getDetail()
       } else {
         setTimeout(() => {
-          getOrderStatusById(orderNum, count++)
+          getOrderStatusById(orderNum, ++count)
         }, 2000)
       }
     })
     .catch(err => {
       console.error(err)
       setTimeout(() => {
-        getOrderStatusById(orderNum, count++)
+        getOrderStatusById(orderNum, ++count)
       }, 2000)
     })
 }
 
 // 解卦
+
 const getDetail = () => {
-  axios.get(host + `api/divination/query/${list.value.join()}`)
+  console.log('getDetail: ', host + `zhouyi/api/divination/query/${list.value.join('')}`)
+  axios.get(host + `zhouyi/api/divination/query/${list.value.join('')}`)
+  // axios.get(host + `zhouyi/api/divination/query/001010`)
     .then(res => {
       res = res.data
+      console.log('detail: ', res)
       if (+res.code === 200 && res.data) {
-        contentImg.value = res.data.divinationExplainUrl
+        contentImg.value = host + 'zhouyi' + res.data.divinationExplainUrl
+        console.log('image src ', host + 'zhouyi' + res.data.divinationExplainUrl)
         showDetail.value = true
       } else {
         console.error(res)
@@ -174,6 +185,10 @@ const getDetail = () => {
       alert('获取解卦详情失败，请稍后重试!!!')
     })
 }
+
+// setTimeout(() => {
+//   getDetail()
+// }, 1000)
 
 const btnClick = () => {
   if (list.value.length >= 6) {
@@ -420,6 +435,8 @@ const tipClick = () => {
     margin: 10px 0;
     .img {
       width: 100%;
+      background: #fff;
+      padding: 4px;
     }
     .tip {
       //padding-top: 10px;
