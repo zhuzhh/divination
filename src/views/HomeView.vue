@@ -200,7 +200,7 @@ const btnClick = () => {
 
 const loginAction = () => {
   console.log('....login')
-  let redirectUri = encodeURIComponent('https://qiming.kongjiankeji.com/login.html')
+  let redirectUri = encodeURIComponent('https://qiming.kongjiankeji.com/h5/login.html')
   // let redirectUri = encodeURIComponent('http://6789.kongjiankeji.com/index.html')
   let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`;
   console.info('url', url)
