@@ -276,17 +276,20 @@ const tipClick = () => {
 <style lang="less" scoped>
 .title-wrap {
   text-align: center;
-  height: 80px;
-  line-height: 80px;
+  padding: 16px 0;
+  height: 102px;
   span {
-    font-size: 40px;
+    //max-width: 2em;
+    //padding: 0 26px;
+    width: 150px;
+    height: 70px;
+    line-height: 1.45;
+    font-size: 48px;
     font-weight: bold;
-    line-height: 1;
-    padding: 6px 20px;
     display: inline-block;
     background: #ed4e4c;
     color: #fff;
-    border-radius: 40px / 25px;
+    border-radius: 70px / 35px;
   }
 }
 .bar-wrap {
@@ -319,10 +322,6 @@ const tipClick = () => {
   height: 38px;
   margin-left: 2rem;
   margin-right: 2rem;
-}
-
-.b-1 {
-  //background-color: red;
 }
 
 .bar.b1 {
@@ -367,10 +366,13 @@ const tipClick = () => {
   }
 
   .btn {
+    width: 150px;
+    height: 70px;
+    line-height: 1.45;
     border: 1px solid #df5151;
     text-align: center;
-    padding: 0 26px;
-    line-height: 1.3;
+    //padding: 0 26px;
+    //line-height: 1.3;
     font-size: 48px;
     font-weight: bold;
     background-color: #df5151;
@@ -381,15 +383,8 @@ const tipClick = () => {
 }
 
 .animation-wrap {
-  //position: fixed;
-  //top: 0;
-  //left: 0;
-  //right: 0;
-  //bottom: 0;
   margin-top: 56px;
   opacity: 0;
-  //z-index: -1;
-  //transition: opacity 300ms;
 }
 
 .animation-wrap.show {
@@ -397,18 +392,7 @@ const tipClick = () => {
   //z-index: 100;
 }
 
-//.animation-wrap .mask {
-//  width: 100%;
-//  height: 100%;
-//  display: block;
-//  background-color: rgba(0, 0, 0, 0.3);
-//}
 .animation-wrap .content {
-  //position: absolute;
-  //z-index: 9999;
-  //top: 200px;
-  //left: 0;
-  //margin-top: 10px;
   width: 100%;
   display: flex;
   align-items: center;
