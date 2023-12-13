@@ -1,4 +1,7 @@
 <template>
+  <div class="title-wrap">
+    <span v-if="title">{{title}}</span>
+  </div>
   <div class="bar-wrap">
     <div
         class="bar"
@@ -39,13 +42,13 @@
   <div class="detail-wrap" :class="showDetail ? 'show' : 'hide'">
     <div class="mask"></div>
     <div class="content-wrap" style="z-index: 99">
-      <img class="img" :src="contentImg" alt="">
+      <img v-for="item in contentImgs" class="img" :src="item" wx:key="item" alt="">
       <!--<img class="img" src="../assets/test.jpg" alt="">-->
       <div class="tip">
         <span style="color: #f00">注意:</span> 请妥善保存卦象释义,退出页面或关闭弹框后，则需要重新起卦
       </div>
       <div class="btn">
-        <img src="../assets/close.png" class="close" alt="" @click="closeDetail">
+        <img src="../assets/close2.png" class="close" alt="" @click="closeDetail">
       </div>
     </div>
   </div>
@@ -63,18 +66,25 @@ const list: Ref<(0 | 1)[]> = ref([])
 let coins: Ref<(0 | 1)[]> = ref([])
 let showAnimation = ref(false)
 let showDetail = ref(false)
-let contentImg = ref('')
+let contentImgs = ref([])
 const openId = localStorage.getItem('login_info')
 const host = 'https://qiming.kongjiankeji.com/'
 const appId = 'wxa6d79f458a0e21e8'
 
+console.log('openId: ', openId)
 let showTip = ref(!openId)
+let title = ref('')
+
+let detailInfo = {}
+let timer = null
 
 console.log(window.location.href)
 
 const closeDetail = () => {
   showDetail.value = false
   list.value.length = 0
+  title.value = ''
+  detailInfo = {}
 }
 
 const getRandom = (): 0 | 1 => {
@@ -89,9 +99,11 @@ const payAction = () => {
     res = res.data
     console.log('pay success ', res)
     if (+res.code === 200 && res.data) {
+      getDetail()
       wxPay(res.data)
     } else {
-      console.error(res.msg)
+      console.error(res)
+      alert('获取解卦信息失败!')
     }
   }).catch(err => {
     alert('下单失败!')
@@ -116,6 +128,8 @@ const wxPay = (params) => {
         // 使用以上方式判断前端返回,微信团队郑重提示：
         // res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
       }
+      clearTimeout(timer)
+      timer = null
       getOrderStatusById(params.outTradeNo)
     });
   //  scp -r dist/* root@182.92.157.104:/home/www/zhouyi/zhouyih5
@@ -141,59 +155,84 @@ const getOrderStatusById = (orderNum: string, count = 0) => {
   console.log('查询订单状态 count: ', count)
   // 轮询十次
   if (count >= times) return
-  // axios.get(host + `zhouyi/api/order/query/${orderNum}`)
   axios.get(host + `zhouyi/wx/pay/query/${orderNum}`)
     .then(res => {
       console.log('res: ', res)
       res = res.data
       if (+res.code === 200) {
-        getDetail()
+        showDialogImg()
       } else {
-        setTimeout(() => {
+        timer = setTimeout(() => {
           getOrderStatusById(orderNum, ++count)
         }, 2000)
       }
     })
     .catch(err => {
       console.error(err)
-      setTimeout(() => {
+      timer = setTimeout(() => {
         getOrderStatusById(orderNum, ++count)
       }, 2000)
     })
 }
 
-// 解卦
+const data = {"msg": "操作成功", "code": 200, "data": {"createBy": null, "createTime": null, "updateBy": null, "updateTime": null, "remark": null, "id": 260, "divinationName": "未济", "divinationTitle": "未济卦第六十四 火水未济", "divinationAttribute": "离宫三世", "divination": "离上 坎下", "divinationValue": "010101", "divinationFirst": "0", "divinationFirstChineseEra": "戊寅", "divinationFirstParaphrase": "父母", "divinationFirstOtherParaphrase": null, "divinationFirstDescription": "上九：有孚于饮酒，无咎；濡其首，有孚，失是。", "divinationSecond": "1", "divinationSecondChineseEra": "戊辰", "divinationSecondParaphrase": "子孙", "divinationSecondOtherParaphrase": null, "divinationSecondDescription": "六五：贞吉，无悔；君子之光，有孚，吉。", "divinationThird": "0", "divinationThirdChineseEra": "戊午", "divinationThirdParaphrase": "兄弟", "divinationThirdOtherParaphrase": "世", "divinationThirdDescription": "九四：贞吉，悔亡；震用伐鬼方，三年有赏于大国。", "divinationFour": "1", "divinationFourChineseEra": "己酉", "divinationFourParaphrase": "妻财", "divinationFourOtherParaphrase": null, "divinationFourDescription": "六三：未济，征凶，利涉大川。", "divinationFive": "0", "divinationFiveChineseEra": "己未", "divinationFiveParaphrase": "子孙", "divinationFiveOtherParaphrase": null, "divinationFiveDescription": "九二：曳其轮，贞吉。", "divinationSix": "1", "divinationSixChineseEra": "己巳", "divinationSixParaphrase": "兄弟", "divinationSixOtherParaphrase": "应", "divinationSixDescription": "初六：濡其尾，吝。", "divinationExplainUrl": "/profile/upload/2023/11/30/未济.png",
+    "divinationExplainUrls": [
+        "/profile/upload/2023/11/30/未济.png",
+        "/profile/upload/2023/11/30/未济.png",
+        "/profile/upload/2023/11/30/未济.png"
+    ], "divinationDescription": "亨；小狐汔济，濡其尾，无攸利。", "status": "0", "delFlag": "0"}}
+
+const test = () => {
+  contentImgs.value = (data.data.divinationExplainUrls || []).map((item: string) => {
+    const url = host + 'zhouyi' + item
+    console.log('image src ', url)
+    return url
+  })
+  title.value = data.data.divinationName
+  showDetail.value = true
+}
+
+const showDialogImg = () => {
+  const res = detailInfo
+  contentImgs.value = (res.data.divinationExplainUrls || []).map((item: string) => {
+    const url = host + 'zhouyi' + item
+    console.log('image src ', url)
+    return url
+  })
+  showDetail.value = true
+}
 
 const getDetail = () => {
   console.log('getDetail: ', host + `zhouyi/api/divination/query/${list.value.join('')}`)
-  axios.get(host + `zhouyi/api/divination/query/${list.value.join('')}`)
-  // axios.get(host + `zhouyi/api/divination/query/001010`)
-    .then(res => {
-      res = res.data
-      console.log('detail: ', res)
-      if (+res.code === 200 && res.data) {
-        contentImg.value = host + 'zhouyi' + res.data.divinationExplainUrl
-        console.log('image src ', host + 'zhouyi' + res.data.divinationExplainUrl)
-        showDetail.value = true
-      } else {
-        console.error(res)
+  return new Promise((resolve, reject) => {
+    axios.get(host + `zhouyi/api/divination/query/${list.value.join('')}`)
+      // axios.get(host + `zhouyi/api/divination/query/001010`)
+      .then(res => {
+        res = res.data
+        console.log('detail: ', res)
+        if (+res.code === 200 && res.data) {
+          title.value = res.data.divinationName
+          detailInfo = res
+          resolve(res.data)
+        } else {
+          console.error(res)
+          alert('获取解卦详情失败，请稍后重试!!!')
+          reject(res)
+        }
+      })
+      .catch(err => {
+        reject(err)
+        console.error(err)
         alert('获取解卦详情失败，请稍后重试!!!')
-      }
-    })
-    .catch(err => {
-      console.error(err)
-      alert('获取解卦详情失败，请稍后重试!!!')
-    })
+      })
+  })
 }
-
-// setTimeout(() => {
-//   getDetail()
-// }, 1000)
 
 const btnClick = () => {
   if (list.value.length >= 6) {
     console.log('解卦....')
     payAction()
+    // test()
   } else {
     coins.value = [getRandom(), getRandom(), getRandom()]
     console.log('coins: ', coins.value)
@@ -209,6 +248,12 @@ const btnClick = () => {
       setTimeout(() => {
         showAnimation.value = false
       }, 1500)
+      if (list.value.length === 6) {
+        setTimeout(() => {
+          detailInfo = {}
+          getDetail()
+        }, 0)
+      }
     }, 1000)
   }
 }
@@ -229,6 +274,21 @@ const tipClick = () => {
 </script>
 
 <style lang="less" scoped>
+.title-wrap {
+  text-align: center;
+  height: 80px;
+  line-height: 80px;
+  span {
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 1;
+    padding: 6px 20px;
+    display: inline-block;
+    background: #ed4e4c;
+    color: #fff;
+    border-radius: 40px / 25px;
+  }
+}
 .bar-wrap {
   padding-bottom: 10px;
   display: flex;
@@ -244,7 +304,7 @@ const tipClick = () => {
     bottom: 0;
     background: url("../assets/bg.jpg") no-repeat;
     background-size: 100% 100%;
-    opacity: 0.2;
+    opacity: 0.03;
     z-index: -1;
   }
 
@@ -293,15 +353,15 @@ const tipClick = () => {
   //padding: 6px;
   //color: #df5151;
   //margin: 2rem;
-  margin-top: 50px;
+  margin-top: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
 
   .icon {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     display: inline-block;
     border-radius: 50%;
   }
@@ -309,10 +369,14 @@ const tipClick = () => {
   .btn {
     border: 1px solid #df5151;
     text-align: center;
-    padding: 2px 12px;
-    color: #df5151;
+    padding: 0 26px;
+    line-height: 1.3;
+    font-size: 48px;
+    font-weight: bold;
+    background-color: #df5151;
+    color: #fff;
     margin: 1rem 2rem;
-    border-radius: 6px;
+    border-radius: 70px / 35px;
   }
 }
 
@@ -407,25 +471,12 @@ const tipClick = () => {
   .mask {
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.8);
     position: absolute;
     bottom: 0;
     z-index: -1;
   }
   .content-wrap {
-    //position: absolute;
-    //top: 0;
-    //left: 0;
-    //width: 100%;
-    ////top: 50%;
-    ////left: 50%;
-    ////transform: translate(-50%, -50%);
-    ////width: 100%;
-    //display: flex;
-    //align-items: center;
-    //justify-content: center;
-    //flex-direction: column;
-    //display: gird;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -433,10 +484,14 @@ const tipClick = () => {
     max-width: 295px;
     transform: translate(-50%, -50%);
     margin: 10px 0;
+    padding: 20px 0 40px;
+    max-height: 100%;
+    overflow: scroll;
     .img {
       width: 100%;
       background: #fff;
       padding: 4px;
+      margin-bottom: 12px;
     }
     .tip {
       //padding-top: 10px;
