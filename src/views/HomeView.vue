@@ -277,19 +277,17 @@ const tipClick = () => {
 .title-wrap {
   text-align: center;
   padding: 16px 0;
-  height: 102px;
+  height: 126px;
   span {
-    //max-width: 2em;
-    //padding: 0 26px;
-    width: 150px;
-    height: 70px;
-    line-height: 1.45;
+    width: 200px;
+    height: 90px;
+    line-height: 90px;
     font-size: 48px;
     font-weight: bold;
     display: inline-block;
-    background: #ed4e4c;
+    background: url("../assets/bg222.png") no-repeat;
+    background-size: 100% 100%;
     color: #fff;
-    border-radius: 70px / 35px;
   }
 }
 .bar-wrap {
@@ -347,11 +345,6 @@ const tipClick = () => {
 }
 
 .btn-wrap {
-  //border: 1px solid #df5151;
-  //text-align: center;
-  //padding: 6px;
-  //color: #df5151;
-  //margin: 2rem;
   margin-top: 30px;
   display: flex;
   align-items: center;
@@ -366,19 +359,16 @@ const tipClick = () => {
   }
 
   .btn {
-    width: 150px;
-    height: 70px;
-    line-height: 1.45;
-    border: 1px solid #df5151;
+    width: 200px;
+    height: 90px;
+    line-height: 90px;
     text-align: center;
-    //padding: 0 26px;
-    //line-height: 1.3;
     font-size: 48px;
     font-weight: bold;
-    background-color: #df5151;
+    background: url("../assets/bg222.png") no-repeat;
+    background-size: 100% 100%;
     color: #fff;
     margin: 1rem 2rem;
-    border-radius: 70px / 35px;
   }
 }
 
@@ -430,7 +420,7 @@ const tipClick = () => {
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 16px;
+  font-size: 32px;
 
   span {
     display: inline-block;
