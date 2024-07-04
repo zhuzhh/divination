@@ -132,7 +132,6 @@ const wxPay = (params) => {
       timer = null
       getOrderStatusById(params.outTradeNo)
     });
-  //  scp -r dist/* root@182.92.157.104:/home/www/zhouyi/zhouyih5
   }
   if (typeof WeixinJSBridge == "undefined") {
     if (document.addEventListener) {
